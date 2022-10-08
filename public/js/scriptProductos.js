@@ -4,7 +4,7 @@
   const inputPrecio = document.getElementById("precio");
   const inputUrl = document.getElementById("url");
 
-  let productos = [];
+  var url = "http://localhost:8080/api/productos";
 
   const socket = io();
 
@@ -15,9 +15,7 @@
     <td><img class="img-fluid" src={{url}} alt={{nombre}}/></td>      
   </tr>`;
 
-  function crearProducto(data) {
-    var url = "http://localhost:8080/api/productos";
-
+  function crearProducto(data) {    
     fetch(url, {
       method: "POST",
       body: JSON.stringify(data),
@@ -35,7 +33,7 @@
 
   function loadProductos(data) {
     const template = Handlebars.compile(text);
-    fetch("http://localhost:8080/api/productos")
+    fetch(url)
       .then((response) => response.json())
       .then((response) => {
         const result = response.map((data) => template(data));
@@ -50,8 +48,7 @@
       });
   }
 
-  formProducto.addEventListener("submit", (event) => {
-    console.log("submit");
+  formProducto.addEventListener("submit", (event) => {    
     event.preventDefault();
     const data = {
       nombre: inputNombre.value,
@@ -64,8 +61,7 @@
     inputNombre.focus();
   });
 
-  socket.on("load-productos", (data) => {
-    console.log("emit productos");
+  socket.on("load-productos", (data) => {    
     loadProductos(data);
   });
 })();
